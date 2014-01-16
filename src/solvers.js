@@ -16,11 +16,12 @@ window.findNRooksSolution = function(n){
   var results = [];
 
   var iterateTree = function(n, tree){
+    console.table(tree.board.rows());
     if(n<1){
       results.push(tree);
     } else {
       for(var i = 0; i<n; i++){
-      //  debugger;
+       // debugger;
         var child = new Tree(n, tree.board.rows(), tree.blackList);
         if(!tree.blackList.hasOwnProperty(i)){
           child.board.rows()[n-1][i] = 1;
@@ -35,7 +36,7 @@ window.findNRooksSolution = function(n){
   var initial = new Tree(n);
   iterateTree(n, initial);
   console.log(results);
-  return results;
+  return results[0].board.rows();
 };
 
 
