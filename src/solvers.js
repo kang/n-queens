@@ -14,21 +14,30 @@
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 window.findNRooksSolution = function(n){
   var results = [];
+  var iterateTree = function(count, tree){
+    debugger;
+    // console.table(tree.board.rows());
+    var child;
 
-  var iterateTree = function(n, tree){
-    console.table(tree.board.rows());
-    if(n<1){
+    if(count<1){
       results.push(tree);
     } else {
-      for(var i = 0; i<n; i++){
-       // debugger;
-        var child = new Tree(n, tree.board.rows(), tree.blackList);
+      for(var i = 0; i < n; i++){
+       debugger;
+        child = new Tree(n, tree.board.rows(), tree.blackList);
         if(!tree.blackList.hasOwnProperty(i)){
-          child.board.rows()[n-1][i] = 1;
+          child.board.rows()[count-1] = child.board.rows()[count-1].slice();
+          child.board.rows()[count-1][i] = 1;
           child.blackList[i] = i;
+          tree.children.push(child);
         }
-        if(n>0){
-          iterateTree(n-1, child);
+      }
+      if(count>0){
+        if (tree.children.length === 0 ){
+          results.push(tree);
+        }
+        for (var c = 0; c < tree.children.length; c++){
+          iterateTree(count-1, tree.children[c]);
         }
       }
     }
@@ -39,6 +48,51 @@ window.findNRooksSolution = function(n){
   return results[0].board.rows();
 };
 
+var inflate = function(array){
+  var result = [];
+  var arrLen = array.length;
+  for(var i = 0; i<arrLen; i++){
+    result.push([]);
+  }
+  for(var x = 0; x<arrLen; x++){
+    for(var m = 0; m<arrLen; m++){
+      result[x].push(0);
+    }
+  }
+  for(var j = 0; j<arrLen; j++){
+    for(var p =0; p<arrLen; p++){
+      result[j][p] = array[p];
+    }
+  }
+  return result;
+};
+
+var findAllRooksEasyWay = function(n){
+  var outcomes = [];
+  var makePlays = function(playedSoFar, rounds){
+    if(rounds === 0){
+
+      outcomes.push(inflate(playedSoFar));
+      return;
+    }
+    for(var i = 1; i<=n; i++){
+      var canPlay = true;
+      if(playedSoFar.length>0){
+        for(var x = 0; x<playedSoFar.length; x++){
+          if(i === playedSoFar[x]){
+            canPlay = false;
+          }
+        }
+      }
+      if(canPlay){
+        makePlays(playedSoFar.concat(i), rounds-1);
+      }
+    }
+  };
+  makePlays([], n);
+  return outcomes;
+};
+
 
 window.Tree = function(n, rows, blackList){
   this.children = [];
@@ -46,7 +100,7 @@ window.Tree = function(n, rows, blackList){
   this.blackList = blackList||{};
 };
 
-// return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
+// return the number of nxn chessboards that exist, with n rooksEasyWay placed such that none of them can attack each other
 window.countNRooksSolutions = function(n){
   return findNRooksSolution(n).length;
 };
