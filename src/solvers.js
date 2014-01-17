@@ -56,12 +56,8 @@ var inflate = function(array){
   }
   for(var x = 0; x<arrLen; x++){
     for(var m = 0; m<arrLen; m++){
+      //broken
       result[x].push(0);
-    }
-  }
-  for(var j = 0; j<arrLen; j++){
-    for(var p =0; p<arrLen; p++){
-      result[j][p] = array[p];
     }
   }
   return result;
